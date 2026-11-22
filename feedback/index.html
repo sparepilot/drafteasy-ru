@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Обратная связь · DraftEasy</title>
+<meta name="description" content="Suggest an improvement or report a problem in DraftEasy.">
+<link rel="icon" type="image/png" href="../img/icon-64.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <nav class="crumbs"><a class="brand" href="../"><img src="../img/icon.svg" alt="" width="40" height="40">DraftEasy</a></nav>
+    <div class="langs" role="group" aria-label="Language">
+      <button type="button" data-lang="ru" aria-pressed="true">RU</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" id="top">
+  <section class="hero">
+    <h1 data-i18n="h1">Tell me what to improve.</h1>
+    <p class="lead" data-i18n="lead">A wish for the next version, a command you miss, or a drawing that does not open right. I read everything; what gets done is listed under What's new.</p>
+  </section>
+
+  <section id="form">
+    <div class="form-box" id="form-box">
+      <p id="form-wait" data-i18n="wait">The form opens here soon.</p>
+    </div>
+    <p class="intro" style="margin-top:14px" data-i18n="privacy">No account needed and no e-mail address asked for. The form is run by Tally, a form service in the EU, and your message goes only to me.</p>
+    <p><a href="../#news" data-i18n="news">See what is new in DraftEasy</a></p>
+  </section>
+</main>
+
+<footer class="wrap">
+  <p class="legal" data-i18n="legal">© 2026 Ilya Ershov. DraftEasy is not affiliated with or endorsed by Autodesk, Inc.</p>
+</footer>
+
+<script>
+// ---- settings ------------------------------------------------------------------
+// The id of the Tally form (the part after tally.so/r/). While it is empty the page says the form opens soon.
+// The form gets hidden fields "product", "version" and "lang" from the page address.
+const TALLY_FORM_ID = "";
+
+const T = {
+  ru: {
+    "h1": "Расскажите, что улучшить.",
+    "lead": "Пожелание к следующей версии, команда, которой не хватает, или чертёж, который открывается неправильно. Я читаю всё; что сделано — видно в разделе «Что нового».",
+    "wait": "Форма скоро появится здесь.",
+    "privacy": "Регистрация не нужна, почту не спрашиваем. Форма работает на Tally, сервисе форм из ЕС, а сообщение получаю только я.",
+    "news": "Что нового в DraftEasy",
+    "legal": "© 2026 Илья Ершов. DraftEasy не связан с Autodesk, Inc. и не одобрен этой компанией."
+  }
+};
+
+const nodes = [...document.querySelectorAll("[data-i18n]")];
+const EN = {};
+nodes.forEach(n => { EN[n.dataset.i18n] = n.textContent; });
+let current = "en";
+
+function showForm() {
+  if (!TALLY_FORM_ID) return;
+  const q = new URLSearchParams(location.search);
+  const p = new URLSearchParams({ alignLeft: "1", hideTitle: "1", transparentBackground: "1", dynamicHeight: "1",
+    product: q.get("product") || "draftEasy-ru", version: q.get("version") || "", lang: current });
+  const box = document.getElementById("form-box");
+  box.innerHTML = "";
+  const f = document.createElement("iframe");
+  f.src = "https://tally.so/embed/" + encodeURIComponent(TALLY_FORM_ID) + "?" + p.toString();
+  f.title = "Feedback form"; f.loading = "lazy";
+  box.appendChild(f);
+}
+
+function setLang(lang) {
+  current = lang;
+  const d = T[lang] || {};
+  nodes.forEach(n => { n.textContent = d[n.dataset.i18n] ?? EN[n.dataset.i18n]; });
+  document.documentElement.lang = lang;
+  document.querySelectorAll(".langs button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+  try { localStorage.setItem("lang", lang); } catch (e) { /* storage is optional */ }
+}
+
+document.querySelectorAll(".langs button").forEach(b => b.addEventListener("click", () => setLang(b.dataset.lang)));
+let start = "";
+try { start = localStorage.getItem("lang") || ""; } catch (e) { start = ""; }
+if (start !== "en" && start !== "ru") start = "ru";
+setLang(start);
+showForm();
+</script>
+</body>
+</html>

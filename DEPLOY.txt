@@ -1,0 +1,15 @@
+Russian DraftEasy site on GitHub Pages
+======================================
+
+1. github.com -> + -> New repository: name drafteasy-ru, Public, Create.
+2. "uploading an existing file": drop everything in this folder (index.html, style.css, changelog.js,
+   DEPLOY.txt and the folders img, terms, feedback), Commit changes.
+3. Settings -> Pages: Deploy from a branch, main, / (root), Save.
+   The site is then at https://sparepilot.github.io/drafteasy-ru/
+4. Installer: build it with  installer\build_installer.bat ru  -> DraftEasy_RU_Setup_1.33.exe.
+   Repository -> Releases -> Create a new release, tag v1.33, attach the .exe, Publish.
+   The download button on the site already points there.
+5. Feedback form: put the Tally form id in TALLY_FORM_ID in feedback/index.html
+   (the same form as drafteasy.no; the form gets product=draftEasy-ru).
+6. A new version: python installer/make_site_changelog.py, update VERSION and DOWNLOAD_URL
+   in index.html, upload the changed files, make a release with the new tag.
